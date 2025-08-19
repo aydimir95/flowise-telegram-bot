@@ -1,0 +1,50 @@
+name: Deploy Bot
+
+on:
+  workflow_run:
+    workflows: ["CI/CD Pipeline"]
+    types:
+      - completed
+    branches: [ main, develop ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  deploy-staging:
+    if: github.ref == 'refs/heads/develop' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+      - name: Deploy to staging
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          echo "Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:develop"
+          # Add your staging deployment commands here
+          # Example: kubectl apply, docker run, etc.
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "🚀 Deploying to production environment..."
+          echo "Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          # Add your production deployment commands here
+          # Example: kubectl apply, docker run, etc.
+
+  notify-deployment:
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Notify deployment status
+        run: |
+          echo "📢 Deployment notification would be sent here"
+          # Add your notification logic (Slack, Discord, email, etc.)

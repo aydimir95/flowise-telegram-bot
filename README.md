@@ -85,18 +85,22 @@ Note: We use `--network host` to allow the bot container to communicate with Flo
 
 ### CI/CD
 
-The project includes a GitHub Actions workflow that automatically:
-- Builds the Docker image
-- Pushes it to GitHub Container Registry (ghcr.io)
-- Tags images based on:
-  - Git branches
+The project includes comprehensive GitHub Actions workflows that automatically:
+- Build and test the Docker image
+- Push to GitHub Container Registry (ghcr.io)
+- Run security scans and code quality checks
+- Deploy to different environments
+- Tag images based on:
+  - Git branches (main, develop)
   - Git tags (v*.*.*)
   - Commit SHA
 
-The workflow runs on:
-- Push to main branch
+The workflows run on:
+- Push to main/develop branches
 - Pull requests to main branch
 - New version tags
+
+For detailed deployment information, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ### Flowise Chatflow Setup
 
@@ -136,6 +140,7 @@ Always maintain a friendly and professional tone. If you don't know something, s
 
 ## Running the Bot
 
+### Local Development
 1. Start the bot using Python:
 ```bash
 python main.py
@@ -144,15 +149,32 @@ python main.py
 2. Start a conversation with your bot on Telegram
 3. Send a message to test the integration
 
+### Production Deployment
+The bot can be deployed using the provided GitHub Actions workflows:
+
+1. **Push to GitHub**: The workflows automatically build and deploy
+2. **Use Pre-built Images**: Pull from GitHub Container Registry
+3. **Custom Deployment**: Use the deployment scripts in `scripts/`
+
+For complete deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## Project Structure
 
 ```
 flowise-telegram/
-├── main.py              # Main bot implementation
-├── docker-compose.yml   # Docker configuration
-├── .env                # Environment configuration
-├── README.md           # Project documentation
-└── .gitignore         # Git ignore rules
+├── main.py                    # Main bot implementation
+├── docker-compose.yml         # Docker configuration
+├── Dockerfile                 # Bot container definition
+├── .env                      # Environment configuration
+├── .github/workflows/        # GitHub Actions workflows
+│   ├── ci-cd.yml            # Main CI/CD pipeline
+│   ├── deploy.yml           # Deployment automation
+│   └── test.yml             # Testing and quality checks
+├── scripts/                  # Deployment scripts
+│   └── deploy.sh            # Automated deployment script
+├── DEPLOYMENT.md            # Comprehensive deployment guide
+├── README.md                # Project documentation
+└── .gitignore              # Git ignore rules
 ```
 
 ## Development
